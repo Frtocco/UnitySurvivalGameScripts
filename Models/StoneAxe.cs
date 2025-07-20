@@ -9,10 +9,12 @@ namespace Survival.Assets.Scripts.Models
         public StoneAxe()
         {   
             name = "Stone Axe";
-            requirements = new List<string> { "Stone", "Stick" };
+            requirements = new List<CraftRequirement>();
+            requirements.Add(new CraftRequirement("Stone", 3));
+            requirements.Add(new CraftRequirement("Stick", 3));
             description = "A basic axe made from stone and wood.";
         }
-
+    
 
         public void Chop()
         {

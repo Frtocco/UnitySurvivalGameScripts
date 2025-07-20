@@ -2,6 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using Survival.Assets.Scripts.Models;
+
 
 public class InventorySystem : MonoBehaviour
 {
@@ -82,9 +85,21 @@ public class InventorySystem : MonoBehaviour
 
     }
 
-    public void RemoveItemFromInventory(string itemName)
+    public void RemoveItemFromInventory(string itemName, int amount)
     {
-        
+        int counter = amount;
+
+        for (var i = slotList.Count - 1; i >= 0; i--)
+        {
+            if (slotList[i].transform.childCount > 0)
+            {
+                if (slotList[i].transform.GetChild(0).name == itemName + "(Clone)" && counter != 0)
+                {
+                    Destroy(slotList[i].transform.GetChild(0).gameObject);
+                    counter--;
+                }
+            }
+        }
     }
 
     private bool CheckIfFull()
@@ -103,6 +118,7 @@ public class InventorySystem : MonoBehaviour
     {
         foreach (GameObject slot in slotList)
         {
+
             if (slot.transform.childCount == 0)
             {
                 return slot;

@@ -61,8 +61,14 @@ public class CraftingSystem : MonoBehaviour
 
     public void CraftAnyItem(Tools item)
     {
-        InventorySystem.Instance.AddToInventory(item.getName());
 
+        foreach (CraftRequirement requirement in item.getRequirements())
+        {
+            InventorySystem.Instance.RemoveItemFromInventory(requirement.getName(), requirement.getAmount());
+        }
+
+        InventorySystem.Instance.AddToInventory(item.getName());
+        
     }
 
     public bool getIsOpen()
