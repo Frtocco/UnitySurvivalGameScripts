@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Survival.Assets.Scripts.Models;
+using Unity.VisualScripting;
 
 public class CraftingSystem : MonoBehaviour
 {
@@ -21,7 +22,7 @@ public class CraftingSystem : MonoBehaviour
     Button craftStoneAxeBTN;
 
     //Requirement text
-    TMP_Text StoneAxeReq1, StoneAxeReq2;
+    TMP_Text StoneAxeRequirements;
 
     bool isOpen;
 
@@ -50,14 +51,26 @@ public class CraftingSystem : MonoBehaviour
         toolsBTN = craftingScreenUI.transform.Find("Tools").GetComponent<Button>();
         toolsBTN.onClick.AddListener(delegate { OpenToolsCategory(); });
 
-        StoneAxeReq1 = toolsScreenUI.transform.Find("StoneAxe").transform.Find("req1").GetComponent<TMP_Text>();
-        StoneAxeReq2 = toolsScreenUI.transform.Find("StoneAxe").transform.Find("req2").GetComponent<TMP_Text>();
+        //Axe GUI
+        StoneAxeRequirements = toolsScreenUI.transform.Find("StoneAxe").transform.Find("Requirements").GetComponent<TMP_Text>();
         craftStoneAxeBTN = toolsScreenUI.transform.Find("StoneAxe").transform.Find("CraftButton").GetComponent<Button>();
         craftStoneAxeBTN.onClick.AddListener(delegate { CraftAnyItem(stoneAxe); });
+        populateRequirements(stoneAxe, StoneAxeRequirements);
 
     }
 
+    public void populateRequirements(Tools tool, TMP_Text textUI)
+    {
+        List<CraftRequirement> requirements = tool.getRequirements();
+        string allReqs = "";
 
+        foreach (var req in requirements)
+        {
+            allReqs += $"{req.getName()}: {req.getAmount()}\n";
+        }
+
+        textUI.text = allReqs.TrimEnd('\n');
+    }
 
     public void CraftAnyItem(Tools item)
     {
