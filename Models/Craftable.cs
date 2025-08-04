@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Survival.Assets.Scripts.Models;
-
 
 namespace Survival.Assets.Scripts.Models
 {
-    public abstract class Tools
+    public abstract class Craftable
     {   
         protected string name;
         protected string description;

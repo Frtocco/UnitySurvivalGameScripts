@@ -100,6 +100,28 @@ public class InventorySystem : MonoBehaviour
                 }
             }
         }
+        Debug.Log("Deleted " + itemName);
+    }
+
+    public void RecalculateList()
+    {
+
+        itemList.Clear();
+
+        foreach (GameObject slot in slotList)
+        {
+            // Function to delete the (Clone) from the string name
+            if (slot.transform.childCount > 0)
+            {
+                string name = slot.transform.GetChild(0).name;
+                string remove = "(Clone)";
+                string result = name.Replace(remove, "");
+
+                itemList.Add(result);
+            }
+        }
+
+
     }
 
     private bool CheckIfFull()

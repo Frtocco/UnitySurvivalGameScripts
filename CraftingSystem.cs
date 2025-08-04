@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using Survival.Assets.Scripts.Models;
 using Unity.VisualScripting;
+using UnityEditor;
 
 public class CraftingSystem : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class CraftingSystem : MonoBehaviour
     bool isOpen;
 
     //Blueprints
-    Tools stoneAxe = new StoneAxe();
+    Craftable stoneAxe = new StoneAxe();
 
     // Singleton
     public static CraftingSystem Instance { get; set; }
@@ -55,11 +56,12 @@ public class CraftingSystem : MonoBehaviour
         StoneAxeRequirements = toolsScreenUI.transform.Find("StoneAxe").transform.Find("Requirements").GetComponent<TMP_Text>();
         craftStoneAxeBTN = toolsScreenUI.transform.Find("StoneAxe").transform.Find("CraftButton").GetComponent<Button>();
         craftStoneAxeBTN.onClick.AddListener(delegate { CraftAnyItem(stoneAxe); });
-        populateRequirements(stoneAxe, StoneAxeRequirements);
+        populateRequirementsText(stoneAxe, StoneAxeRequirements);
 
     }
 
-    public void populateRequirements(Tools tool, TMP_Text textUI)
+    // Function that populates the requirements of each recipe.
+    public void populateRequirementsText(Craftable tool, TMP_Text textUI)
     {
         List<CraftRequirement> requirements = tool.getRequirements();
         string allReqs = "";
@@ -72,7 +74,7 @@ public class CraftingSystem : MonoBehaviour
         textUI.text = allReqs.TrimEnd('\n');
     }
 
-    public void CraftAnyItem(Tools item)
+    public void CraftAnyItem(Craftable item)
     {
 
         foreach (CraftRequirement requirement in item.getRequirements())
@@ -80,8 +82,21 @@ public class CraftingSystem : MonoBehaviour
             InventorySystem.Instance.RemoveItemFromInventory(requirement.getName(), requirement.getAmount());
         }
 
-        InventorySystem.Instance.AddToInventory(item.getName());
+        StartCoroutine(DelayedRecalculate());
+        StartCoroutine(DelayedAddItem(item));
         
+    }
+
+    private IEnumerator DelayedRecalculate()
+    {
+        yield return null; // espera 1 frame
+        InventorySystem.Instance.RecalculateList();
+    }
+
+    private IEnumerator DelayedAddItem(Craftable item)
+    {
+        yield return null; // espera 1 frame
+        InventorySystem.Instance.AddToInventory(item.getName());
     }
 
     public bool getIsOpen()
@@ -96,9 +111,48 @@ public class CraftingSystem : MonoBehaviour
         toolsScreenUI.SetActive(true);
     
     }
+
     
+    // Check in inventory if the items needed to craft the item are met
+    private bool CheckIfRequirementsAreMet(Craftable tool)
+    {
+        List<CraftRequirement> requirements = tool.getRequirements();
+        inventoryItemList = InventorySystem.Instance.itemList;
+
+        foreach (CraftRequirement requirement in requirements)
+        {
+            var amountNeeded = requirement.getAmount();
+            foreach (string itemInInventory in inventoryItemList)
+            {
+                if (itemInInventory == requirement.getName())
+                {
+                    amountNeeded--;
+                }
+            }
+            if (amountNeeded > 0)
+            {
+                return false;
+            }
+
+        }
+
+        return true;
+
+    }
+
     void Update()
     {
+        if (CheckIfRequirementsAreMet(stoneAxe))
+        {
+            craftStoneAxeBTN.gameObject.SetActive(true);
+            Debug.Log(CheckIfRequirementsAreMet(stoneAxe));
+        }
+        else
+        {
+            craftStoneAxeBTN.gameObject.SetActive(false);
+            Debug.Log(CheckIfRequirementsAreMet(stoneAxe));
+        }
+
         if (Input.GetKeyDown(KeyCode.C) && !isOpen)
         {
             Cursor.lockState = CursorLockMode.None;

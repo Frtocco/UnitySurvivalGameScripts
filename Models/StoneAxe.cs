@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Survival.Assets.Scripts.Models
 {
-    public class StoneAxe : Tools, Axe
+    public class StoneAxe : Craftable, Axe
     {
 
         public StoneAxe()
