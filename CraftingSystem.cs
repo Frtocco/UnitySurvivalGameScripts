@@ -81,7 +81,7 @@ public class CraftingSystem : MonoBehaviour
         {
             InventorySystem.Instance.RemoveItemFromInventory(requirement.getName(), requirement.getAmount());
         }
-
+        // Unity needs 1 frame to delete game objects so we start a CoRoutine to handle it.
         StartCoroutine(DelayedRecalculate());
         StartCoroutine(DelayedAddItem(item));
         
@@ -89,13 +89,13 @@ public class CraftingSystem : MonoBehaviour
 
     private IEnumerator DelayedRecalculate()
     {
-        yield return null; // espera 1 frame
+        yield return new WaitForSeconds(1f);
         InventorySystem.Instance.RecalculateList();
     }
 
     private IEnumerator DelayedAddItem(Craftable item)
     {
-        yield return null; // espera 1 frame
+        yield return new WaitForSeconds(1f);
         InventorySystem.Instance.AddToInventory(item.getName());
     }
 
