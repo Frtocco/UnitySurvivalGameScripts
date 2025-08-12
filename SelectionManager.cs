@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
 using Microsoft.Unity.VisualStudio.Editor;
+using Survival.Assets.Scripts.Interfaces;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -35,6 +36,12 @@ public class SelectionManager : MonoBehaviour
                 interaction_text.text = interactable.GetItemName();
                 interaction_Info_UI.SetActive(true);
 
+                if (selectionTransform.TryGetComponent<IPickable>(out var pickable))
+                {
+                    centerDotImage.gameObject.SetActive(false);
+                    handIcon.gameObject.SetActive(true);
+                }
+
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     interactable.OnInteract();
@@ -42,7 +49,12 @@ public class SelectionManager : MonoBehaviour
 
                 return;
             }
+
+            
         }
+
+        centerDotImage.gameObject.SetActive(true);
+        handIcon.gameObject.SetActive(false);
 
         interaction_Info_UI.SetActive(false);
     }
