@@ -15,31 +15,31 @@ public class SelectionManager : MonoBehaviour
         interaction_text = interaction_Info_UI.GetComponent<TMP_Text>();
     }
 
-void Update()
-{
-    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    RaycastHit hit;
-
-    if (Physics.Raycast(ray, out hit, maxDistance))
+    void Update()
     {
-        var selectionTransform = hit.transform;
-        var interactable = selectionTransform.GetComponent<InteractableObject>();
-
-        if (interactable != null)
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+    
+        if (Physics.Raycast(ray, out hit, maxDistance))
         {
-            interaction_text.text = interactable.GetItemName();
-            interaction_Info_UI.SetActive(true);
-
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            var selectionTransform = hit.transform;
+            var interactable = selectionTransform.GetComponent<InteractableObject>();
+    
+            if (interactable != null)
             {
-                interactable.OnInteract();
+                interaction_text.text = interactable.GetItemName();
+                interaction_Info_UI.SetActive(true);
+    
+                if (Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    interactable.OnInteract();
+                }
+    
+                return;
             }
-
-            return;
         }
+    
+        interaction_Info_UI.SetActive(false);
     }
-
-    interaction_Info_UI.SetActive(false);
-}
 
 }
