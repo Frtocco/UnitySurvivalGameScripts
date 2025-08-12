@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
 using Microsoft.Unity.VisualStudio.Editor;
@@ -11,8 +12,8 @@ public class SelectionManager : MonoBehaviour
     TMP_Text interaction_text;
     public float maxDistance = 3f;
 
-    public Image centerDotImage;
-    public Image handIcon;
+    public UnityEngine.UI.Image centerDotImage;
+    public UnityEngine.UI.Image handIcon;
 
     private void Start()
     {
