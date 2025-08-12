@@ -13,4 +13,5 @@ public class InteractableObject : MonoBehaviour
     {
         Debug.Log("Interacted with: " + ItemName);
     }
+    
 }

@@ -1,9 +1,10 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using Survival.Assets.Scripts.Interfaces;
 
-public class PickableObject : InteractableObject
+public class PickableObject : InteractableObject, IPickable
 {
-    public override void OnInteract()
+    public void OnPick()
     {
         if (!InventorySystem.Instance.getIsFull())
         {
@@ -16,4 +17,10 @@ public class PickableObject : InteractableObject
             Debug.Log("Inventory is full");
         }
     }
+
+    public override void OnInteract()
+    {
+        OnPick();
+    }
+
 }

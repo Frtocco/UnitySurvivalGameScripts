@@ -24,7 +24,6 @@ public class CraftableUI : MonoBehaviour
         if (nameText != null)
             nameText.text = craftable.getName();
 
-        // Botón de crafteo
         if (craftButton != null)
         {
             craftButton.onClick.RemoveAllListeners();

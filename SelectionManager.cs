@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
+using Microsoft.Unity.VisualStudio.Editor;
+using Survival.Assets.Scripts.Interfaces;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -10,36 +13,50 @@ public class SelectionManager : MonoBehaviour
     TMP_Text interaction_text;
     public float maxDistance = 3f;
 
+    public UnityEngine.UI.Image centerDotImage;
+    public UnityEngine.UI.Image handIcon;
+
     private void Start()
     {
         interaction_text = interaction_Info_UI.GetComponent<TMP_Text>();
     }
 
-void Update()
-{
-    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    RaycastHit hit;
-
-    if (Physics.Raycast(ray, out hit, maxDistance))
+    void Update()
     {
-        var selectionTransform = hit.transform;
-        var interactable = selectionTransform.GetComponent<InteractableObject>();
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
 
-        if (interactable != null)
+        if (Physics.Raycast(ray, out hit, maxDistance))
         {
-            interaction_text.text = interactable.GetItemName();
-            interaction_Info_UI.SetActive(true);
+            var selectionTransform = hit.transform;
+            var interactable = selectionTransform.GetComponent<InteractableObject>();
 
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (interactable != null)
             {
-                interactable.OnInteract();
+                interaction_text.text = interactable.GetItemName();
+                interaction_Info_UI.SetActive(true);
+
+                if (selectionTransform.TryGetComponent<IPickable>(out var pickable))
+                {
+                    centerDotImage.gameObject.SetActive(false);
+                    handIcon.gameObject.SetActive(true);
+                }
+
+                if (Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    interactable.OnInteract();
+                }
+
+                return;
             }
 
-            return;
+            
         }
-    }
 
-    interaction_Info_UI.SetActive(false);
-}
+        centerDotImage.gameObject.SetActive(true);
+        handIcon.gameObject.SetActive(false);
+
+        interaction_Info_UI.SetActive(false);
+    }
 
 }
