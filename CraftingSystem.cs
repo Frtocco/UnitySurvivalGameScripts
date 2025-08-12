@@ -13,17 +13,11 @@ public class CraftingSystem : MonoBehaviour
 
     public GameObject craftingScreenUI;
     public GameObject toolsScreenUI;
-    
+
     public List<string> inventoryItemList = new List<string>();
 
     //Category Button
     Button toolsBTN;
-
-    //Craft buttons
-    Button craftStoneAxeBTN;
-
-    //Requirement text
-    TMP_Text StoneAxeRequirements;
 
     bool isOpen;
 
@@ -52,30 +46,21 @@ public class CraftingSystem : MonoBehaviour
         toolsBTN = craftingScreenUI.transform.Find("Tools").GetComponent<Button>();
         toolsBTN.onClick.AddListener(delegate { OpenToolsCategory(); });
 
-        //Axe GUI
-        StoneAxeRequirements = toolsScreenUI.transform.Find("StoneAxe").transform.Find("Requirements").GetComponent<TMP_Text>();
-        craftStoneAxeBTN = toolsScreenUI.transform.Find("StoneAxe").transform.Find("CraftButton").GetComponent<Button>();
-        craftStoneAxeBTN.onClick.AddListener(delegate { CraftAnyItem(stoneAxe); });
-        populateRequirementsText(stoneAxe, StoneAxeRequirements);
-
-    }
-
-    // Function that populates the requirements of each recipe.
-    public void populateRequirementsText(Craftable tool, TMP_Text textUI)
-    {
-        List<CraftRequirement> requirements = tool.getRequirements();
-        string allReqs = "";
-
-        foreach (var req in requirements)
+        // Stone axe GUI using CraftableUI
+        var stoneAxePanel = toolsScreenUI.transform.Find("StoneAxe").GetComponent<CraftableUI>();
+        if (stoneAxePanel != null)
         {
-            allReqs += $"{req.getName()}: {req.getAmount()}\n";
+            stoneAxePanel.Setup(stoneAxe);
         }
-
-        textUI.text = allReqs.TrimEnd('\n');
     }
 
     public void CraftAnyItem(Craftable item)
     {
+
+        if (!CheckIfRequirementsAreMet(item))
+        {
+            return;
+        }
 
         foreach (CraftRequirement requirement in item.getRequirements())
         {
@@ -89,13 +74,13 @@ public class CraftingSystem : MonoBehaviour
 
     private IEnumerator DelayedRecalculate()
     {
-        yield return null; // espera 1 frame
+        yield return new WaitForSeconds(0.5f);
         InventorySystem.Instance.RecalculateList();
     }
 
     private IEnumerator DelayedAddItem(Craftable item)
     {
-        yield return null; // espera 1 frame
+        yield return new WaitForSeconds(0.5f);
         InventorySystem.Instance.AddToInventory(item.getName());
     }
 
@@ -106,15 +91,13 @@ public class CraftingSystem : MonoBehaviour
 
     void OpenToolsCategory()
     {
-
         craftingScreenUI.SetActive(false);
         toolsScreenUI.SetActive(true);
-    
     }
 
-    
+
     // Check in inventory if the items needed to craft the item are met
-    private bool CheckIfRequirementsAreMet(Craftable tool)
+    public bool CheckIfRequirementsAreMet(Craftable tool)
     {
         List<CraftRequirement> requirements = tool.getRequirements();
         inventoryItemList = InventorySystem.Instance.itemList;
@@ -142,17 +125,6 @@ public class CraftingSystem : MonoBehaviour
 
     void Update()
     {
-        if (CheckIfRequirementsAreMet(stoneAxe))
-        {
-            craftStoneAxeBTN.gameObject.SetActive(true);
-            Debug.Log(CheckIfRequirementsAreMet(stoneAxe));
-        }
-        else
-        {
-            craftStoneAxeBTN.gameObject.SetActive(false);
-            Debug.Log(CheckIfRequirementsAreMet(stoneAxe));
-        }
-
         if (Input.GetKeyDown(KeyCode.C) && !isOpen)
         {
             Cursor.lockState = CursorLockMode.None;
@@ -169,4 +141,5 @@ public class CraftingSystem : MonoBehaviour
             isOpen = false;
         }
     }
+
 }
