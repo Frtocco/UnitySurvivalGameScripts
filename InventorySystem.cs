@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using Survival.Assets.Scripts.Models;
 
@@ -15,8 +16,12 @@ public class InventorySystem : MonoBehaviour
 
     public List<GameObject> slotList = new List<GameObject>();
     public List<string> itemList = new List<string>();
+
     private GameObject itemToAdd;
     private GameObject whatSlotToEquip;
+
+    // Item alert pop up
+    public GameObject itemAddedAlert;
 
     private bool isOpen;
 
@@ -82,6 +87,8 @@ public class InventorySystem : MonoBehaviour
         itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
         itemToAdd.transform.SetParent(whatSlotToEquip.transform);
         itemList.Add(itemName);
+
+        ShowItemAdded(itemName, itemToAdd.GetComponent<Image>().sprite);
 
     }
 
@@ -153,4 +160,16 @@ public class InventorySystem : MonoBehaviour
     {
         return CheckIfFull();
     }
+
+    private void ShowItemAdded(string itemName, Sprite image)
+    {
+        TMP_Text itemAddedText = itemAddedAlert.transform.Find("ItemAddedText").GetComponent<TMP_Text>();
+        Image itemAddedImage = itemAddedAlert.transform.Find("ItemAddedImage").GetComponent<Image>();
+
+        itemAddedText.text = itemName;
+        itemAddedImage.sprite = image;  
+
+        itemAddedAlert.SetActive(true);
+    }
+
 }
