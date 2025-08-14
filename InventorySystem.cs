@@ -167,9 +167,35 @@ public class InventorySystem : MonoBehaviour
         Image itemAddedImage = itemAddedAlert.transform.Find("ItemAddedImage").GetComponent<Image>();
 
         itemAddedText.text = itemName;
-        itemAddedImage.sprite = image;  
+        itemAddedImage.sprite = image;
 
+        CanvasGroup cg = itemAddedAlert.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = itemAddedAlert.AddComponent<CanvasGroup>();
+
+        cg.alpha = 1f;
         itemAddedAlert.SetActive(true);
-    }
 
+
+        StartCoroutine(FadeOutAndDisable(cg, 2f, 1f));
+
+    }
+    
+    private IEnumerator FadeOutAndDisable(CanvasGroup canvasGroup, float delay, float duration)
+    {
+        yield return new WaitForSeconds(delay);
+
+        float startAlpha = canvasGroup.alpha;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, time / duration);
+            yield return null;
+        }
+
+        canvasGroup.alpha = 0f;
+        itemAddedAlert.SetActive(false);
+    }
 }
