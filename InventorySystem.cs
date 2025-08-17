@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Survival.Assets.Scripts.Models;
+using Unity.VisualScripting;
+using Survival.Assets.Scripts;
 
 
 public class InventorySystem : MonoBehaviour
@@ -24,6 +26,8 @@ public class InventorySystem : MonoBehaviour
     public GameObject itemAddedAlert;
 
     private bool isOpen;
+
+    private Coroutine alertFader;
 
     public bool getIsOpen()
     {
@@ -163,6 +167,7 @@ public class InventorySystem : MonoBehaviour
 
     private void ShowItemAdded(string itemName, Sprite image)
     {
+
         TMP_Text itemAddedText = itemAddedAlert.transform.Find("ItemAddedText").GetComponent<TMP_Text>();
         Image itemAddedImage = itemAddedAlert.transform.Find("ItemAddedImage").GetComponent<Image>();
 
@@ -176,26 +181,20 @@ public class InventorySystem : MonoBehaviour
         cg.alpha = 1f;
         itemAddedAlert.SetActive(true);
 
-
-        StartCoroutine(FadeOutAndDisable(cg, 2f, 1f));
-
-    }
-    
-    private IEnumerator FadeOutAndDisable(CanvasGroup canvasGroup, float delay, float duration)
-    {
-        yield return new WaitForSeconds(delay);
-
-        float startAlpha = canvasGroup.alpha;
-        float time = 0f;
-
-        while (time < duration)
+        if (alertFader != null)
         {
-            time += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, time / duration);
-            yield return null;
+            StopCoroutine(alertFader);
         }
 
-        canvasGroup.alpha = 0f;
-        itemAddedAlert.SetActive(false);
+        alertFader = StartCoroutine(DelayedFadeOut(cg, 3f));
+
     }
-}
+
+    private IEnumerator DelayedFadeOut(CanvasGroup canvasGroup, float delay)
+    {
+        yield return new WaitForSeconds(2f);
+        yield return UIFader.FadeOut(canvasGroup, delay);
+        canvasGroup.gameObject.SetActive(false);
+    }
+    
+}   

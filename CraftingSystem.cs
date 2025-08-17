@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Survival.Assets.Scripts;
 using Survival.Assets.Scripts.Models;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -13,6 +14,7 @@ public class CraftingSystem : MonoBehaviour
 
     public GameObject craftingScreenUI;
     public GameObject toolsScreenUI;
+    private CraftingCategory currentCategory;
 
     public List<string> inventoryItemList = new List<string>();
 
@@ -48,10 +50,7 @@ public class CraftingSystem : MonoBehaviour
 
         // Stone axe GUI using CraftableUI
         var stoneAxePanel = toolsScreenUI.transform.Find("StoneAxe").GetComponent<CraftableUI>();
-        if (stoneAxePanel != null)
-        {
-            stoneAxePanel.Setup(stoneAxe);
-        }
+        stoneAxePanel.Setup(stoneAxe);
     }
 
     public void CraftAnyItem(Craftable item)
@@ -59,6 +58,7 @@ public class CraftingSystem : MonoBehaviour
 
         if (!CheckIfRequirementsAreMet(item))
         {
+            ShowCraftingAlert("Not enough resources");
             return;
         }
 
@@ -74,13 +74,13 @@ public class CraftingSystem : MonoBehaviour
 
     private IEnumerator DelayedRecalculate()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.1f);
         InventorySystem.Instance.RecalculateList();
     }
 
     private IEnumerator DelayedAddItem(Craftable item)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.1f);
         InventorySystem.Instance.AddToInventory(item.getName());
     }
 
@@ -93,6 +93,7 @@ public class CraftingSystem : MonoBehaviour
     {
         craftingScreenUI.SetActive(false);
         toolsScreenUI.SetActive(true);
+        currentCategory = toolsScreenUI.GetComponent<CraftingCategory>();
     }
 
 
@@ -121,6 +122,14 @@ public class CraftingSystem : MonoBehaviour
 
         return true;
 
+    }
+
+    private void ShowCraftingAlert(string msg)
+    {
+        if (currentCategory != null)
+        {
+            currentCategory.ShowAlert(msg);
+        }
     }
 
     void Update()
