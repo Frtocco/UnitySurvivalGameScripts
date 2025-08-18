@@ -148,6 +148,7 @@ public class CraftingSystem : MonoBehaviour
             craftingScreenUI.SetActive(false);
             toolsScreenUI.SetActive(false);
             isOpen = false;
+            currentCategory.DisableAlert();
         }
     }
 
