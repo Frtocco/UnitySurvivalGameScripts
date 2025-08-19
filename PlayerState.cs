@@ -5,7 +5,15 @@ using UnityEngine;
 public class PlayerState : MonoBehaviour
 {
 
-    public static PlayerState Instance { get; private set;}
+    public static PlayerState Instance { get; private set; }
+
+    //Health
+    public float currentHealth;
+    public float maxHealth;
+
+    // Stamina
+    public float currentStamina;
+    public float maxStamina;
 
     private void Awake()
     {
@@ -21,12 +29,31 @@ public class PlayerState : MonoBehaviour
 
     void Start()
     {
-        
+        currentHealth = maxHealth;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+
+    }
+
+    public float getMaxHealth()
+    {
+        return maxHealth;
+    }
+
+    public float getCurrentHealth()
+    {
+        return currentHealth;
+    }
+
+    public float getMaxStamina()
+    {
+        return maxStamina;
+    }
+
+    public float getCurrentStamina()
+    {
+        return currentStamina;
     }
 }
