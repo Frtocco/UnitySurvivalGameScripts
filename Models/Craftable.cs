@@ -10,6 +10,7 @@ namespace Survival.Assets.Scripts.Models
         protected string name;
         protected string description;
         protected List<CraftRequirement> requirements;
+        protected static int itemId = 0;
 
         public string getName()
         {

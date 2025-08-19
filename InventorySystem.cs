@@ -2,8 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using Survival.Assets.Scripts.Models;
+using Unity.VisualScripting;
+using Survival.Assets.Scripts;
 
 
 public class InventorySystem : MonoBehaviour
@@ -15,10 +18,16 @@ public class InventorySystem : MonoBehaviour
 
     public List<GameObject> slotList = new List<GameObject>();
     public List<string> itemList = new List<string>();
+
     private GameObject itemToAdd;
     private GameObject whatSlotToEquip;
 
+    // Item alert pop up
+    public GameObject itemAddedAlert;
+
     private bool isOpen;
+
+    private Coroutine alertFader;
 
     public bool getIsOpen()
     {
@@ -82,6 +91,8 @@ public class InventorySystem : MonoBehaviour
         itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
         itemToAdd.transform.SetParent(whatSlotToEquip.transform);
         itemList.Add(itemName);
+
+        ShowItemAdded(itemName, itemToAdd.GetComponent<Image>().sprite);
 
     }
 
@@ -153,4 +164,37 @@ public class InventorySystem : MonoBehaviour
     {
         return CheckIfFull();
     }
-}
+
+    private void ShowItemAdded(string itemName, Sprite image)
+    {
+
+        TMP_Text itemAddedText = itemAddedAlert.transform.Find("ItemAddedText").GetComponent<TMP_Text>();
+        Image itemAddedImage = itemAddedAlert.transform.Find("ItemAddedImage").GetComponent<Image>();
+
+        itemAddedText.text = itemName;
+        itemAddedImage.sprite = image;
+
+        CanvasGroup cg = itemAddedAlert.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = itemAddedAlert.AddComponent<CanvasGroup>();
+
+        cg.alpha = 1f;
+        itemAddedAlert.SetActive(true);
+
+        if (alertFader != null)
+        {
+            StopCoroutine(alertFader);
+        }
+
+        alertFader = StartCoroutine(DelayedFadeOut(cg, 3f));
+
+    }
+
+    private IEnumerator DelayedFadeOut(CanvasGroup canvasGroup, float delay)
+    {
+        yield return new WaitForSeconds(2f);
+        yield return UIFader.FadeOut(canvasGroup, delay);
+        canvasGroup.gameObject.SetActive(false);
+    }
+    
+}   
