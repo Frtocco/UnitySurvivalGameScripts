@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using UnityEngine;
 
 public class PlayerState : MonoBehaviour
@@ -39,21 +40,21 @@ public class PlayerState : MonoBehaviour
 
     public float getMaxHealth()
     {
-        return maxHealth;
+        return this.maxHealth;
     }
 
     public float getCurrentHealth()
     {
-        return currentHealth;
+        return this.currentHealth;
     }
 
     public float getMaxStamina()
     {
-        return maxStamina;
+        return this.maxStamina;
     }
 
     public float getCurrentStamina()
     {
-        return currentStamina;
+        return this.currentStamina;
     }
 }
